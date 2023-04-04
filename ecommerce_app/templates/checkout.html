@@ -1,0 +1,158 @@
+{% extends 'base.html' %} {% load static %} {% block body %}
+<!-- Breadcrumb Start -->
+<div class="breadcrumb-wrap">
+    <div class="container-fluid">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="#">Products</a></li>
+            <li class="breadcrumb-item active">Checkout</li>
+        </ul>
+    </div>
+</div>
+<!-- Breadcrumb End -->
+
+<!-- Checkout Start -->
+<div class="checkout">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="checkout-inner">
+                    <div class="billing-address" id="billing-address">
+                        <h2>Shipping Address</h2>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>First Name</label>
+                                <input class="form-control" type="text" placeholder="First Name" name="first_name" id="first_name" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label>Last Name"</label>
+                                <input class="form-control" type="text" placeholder="Last Name" name="last_name" id="last_name" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label>E-mail</label>
+                                <input class="form-control" type="text" placeholder="E-mail" name="email" pattern=".+@gmail\.com|.+@hotmail\.com" id="email" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label>Mobile No</label>
+                                <input class="form-control" type="text" placeholder="Mobile No" name="phone" id="phone" required />
+                            </div>
+                            <div class="col-md-12">
+                                <label>Address</label>
+                                <input class="form-control" type="text" placeholder="Address" name="address" id="address" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label>City</label>
+                                <input class="form-control" type="text" placeholder="City" name="city" id="city" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label>State</label>
+                                <input class="form-control" type="text" placeholder="State" name="state" id="state" required />
+                            </div>
+                            <div class="col-md-6 ">
+                                <label>ZIP Code</label>
+                                <input class="form-control" type="text" placeholder="ZIP Code" name="zipcode" id="zipcode" required />
+                            </div>
+                        </div>
+                        <div class="checkout-btn">
+                            <button class="btn btn-md w-100" id="btn-billing-address">
+              Continue
+              </button>
+                        </div>
+                    </div>
+
+                    <div class="payment-methods invisible" id="payment-methods">
+                        <h2>Payment Methods</h2>
+                        <div class="row"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="checkout-inner">
+                    <div class="checkout-summary">
+                        <h1>Cart Total</h1>
+                        <p>Orders<span>{{order.get_cart_items}}</span></p>
+                        <p class="ship-cost">Shipping Cost<span>$1</span></p>
+                        <h2>Grand Total<span>${{order.get_cart_total}}</span></h2>
+                    </div>
+                    <div class="checkout-btn">
+                        <button class="btn btn-lg proccess algin-center w-100 invisible" id="btn-proccess-checkout">order</button
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Checkout End -->
+{% endblock body %}
+{% block script %}
+<script>
+  if (user == "AnonymousUser"){
+    document.getElementById('billing-address').innerHTML=''
+  }
+
+  const element = document.getElementById("btn-billing-address");
+element.addEventListener("click", function() {
+
+  document.getElementById('btn-billing-address').classList.add('invisible')
+  document.getElementById('payment-methods').classList.remove('invisible')
+  document.getElementById('btn-proccess-checkout').classList.remove('invisible')
+});
+
+document.getElementById('btn-proccess-checkout').addEventListener("click",
+function(e){
+  submitFormData()
+})
+function submitFormData(){
+  console.log("Pyment button clicked...")
+  first_name = document.getElementById('first_name').value
+  last_name = document.getElementById('last_name').value
+  email = document.getElementById('email').value
+  phone = document.getElementById('phone').value
+  address = document.getElementById('address').value
+  city = document.getElementById('city').value
+  state = document.getElementById('state').value
+  zipcode = document.getElementById('zipcode').value
+  
+  var shippingInfo = {
+    'first_name':null,
+    'last_name':null,
+    'email':null,
+    'phone':null,
+    'address':null,
+    'city':null,
+    'state':null,
+    'zipcode':null,
+  }
+  if(user != "AnonymousUser"){
+    shippingInfo.first_name = first_name
+    shippingInfo.last_name = last_name
+    shippingInfo.email = email
+    shippingInfo.phone = phone
+    shippingInfo.address = address
+    shippingInfo.city = city
+    shippingInfo.state = state
+    shippingInfo.zipcode = zipcode
+    
+  }
+  
+  var url ='/proccess_order/'
+  fetch(url,{
+    method:"POST",
+    headers:{
+      'Content-Type':'application/json',
+      'X-CSRFToken':csrftoken,
+    },
+    body:JSON.stringify({'shipping':shippingInfo,'total':"{{order.get_cart_total}}"},
+  )
+})
+    .then((response) => response.json())
+    .then((data) => {
+      console.log('success:', data);
+      alert('Treansaction complete');
+      window.location.href = "{% url 'home' %}"
+    })
+  
+}
+</script>
+{% endblock%}

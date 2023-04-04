@@ -1,0 +1,339 @@
+{% extends 'base.html' %} {% block style %}
+<style>
+    .brand {
+        text-align: center;
+        font-size: 60px;
+        margin-top: -25px;
+        color: #ff6f61;
+        background-color: wheat;
+        padding: 5px 0;
+    }
+    
+    .current {
+        color: #bd1100 !important;
+        background: #000000!important;
+        border-color: #bd1100!important;
+    }
+</style>{% endblock %} {% load static %} {% block body %}
+<!-- Breadcrumb Start -->
+<div class="breadcrumb-wrap">
+    <div class="container-fluid">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home'  %}">Home</a></li>
+            <li class="breadcrumb-item">{% if category %}
+                <a href="{% url 'product_category' category.pk %}">{{category.name}}</a> {% elif ProductsPrand %}
+                <a href="{% url 'product_prand_list' ProductsPrand.pk %}">{{ProductsPrand.name}}</a> {% else %}
+
+                <a href="{% url 'product_list'  %}">Products</a> {% endif %}</li>
+            <li class="breadcrumb-item active">Product List</li>
+        </ul>
+    </div>
+</div>
+<!-- Breadcrumb End -->
+
+<!-- Product List Start -->
+<div class="product-view">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="product-view-top">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="product-search">
+                                        <input type="email" value="Search">
+                                        <button><i class="fa fa-search"></i></button>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="product-short">
+                                        <div class="dropdown">
+                                            {% if order_style %}
+                                            <div class="dropdown-toggle" data-toggle="dropdown">{{order_style}}</div>{% else%}
+                                            <div class="dropdown-toggle" data-toggle="dropdown">Product short by</div>{% endif%}
+
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <a href="{% url 'orderd_product_list' 1 %}" class="dropdown-item">Newest</a>
+                                                <a href="#" class="dropdown-item">Popular</a>
+                                                <a href="#" class="dropdown-item">Most sale</a>
+                                                <a href="{% url 'orderd_product_list' 2 %}" class="dropdown-item">Oldest</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="product-price-range">
+                                        <div class="dropdown">
+                                            <div class="dropdown-toggle" data-toggle="dropdown">{% if price_text %} {{price_text}} {% else%} Product price range {% endif %}</div>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                {% if category %}
+                                                <a href="{% url 'product_list_priceAndCategory' category.pk 1 %}" class="dropdown-item">$0 to $50</a>
+                                                <a href="{% url 'product_list_priceAndCategory' category.pk 2 %}" class="dropdown-item">$51 to $100</a>
+                                                <a href="{% url 'product_list_priceAndCategory' category.pk 3 %}" class="dropdown-item">$101 to $150</a>
+                                                <a href="{% url 'product_list_priceAndCategory' category.pk 4 %}" class="dropdown-item">$151 to $200</a>
+                                                <a href="{% url 'product_list_priceAndCategory' category.pk 5 %}" class="dropdown-item">$201 to $250</a>
+                                                <a href="{% url 'product_list_priceAndCategory' category.pk 6 %}" class="dropdown-item">$251 to $300</a>
+                                                <a href="{% url 'product_list_priceAndCategory' category.pk 7 %}" class="dropdown-item">$301 to $350</a>
+                                                <a href="{% url 'product_list_priceAndCategory' category.pk 8 %}" class="dropdown-item">$351 to $400</a>
+                                                <a href="{% url 'product_list_priceAndCategory' category.pk 9 %}" class="dropdown-item">$401 to $450</a>
+                                                <a href="{% url 'product_list_priceAndCategory' category.pk 10 %}" class="dropdown-item">$451 to $3000</a> {% else %}
+
+                                                <a href="{% url 'product_list_price' 1 %}" class="dropdown-item">$0 to $50</a>
+                                                <a href="{% url 'product_list_price' 2 %}" class="dropdown-item">$51 to $100</a>
+                                                <a href="{% url 'product_list_price' 3 %}" class="dropdown-item">$101 to $150</a>
+                                                <a href="{% url 'product_list_price' 4 %}" class="dropdown-item">$151 to $200</a>
+                                                <a href="{% url 'product_list_price' 5 %}" class="dropdown-item">$201 to $250</a>
+                                                <a href="{% url 'product_list_price' 6 %}" class="dropdown-item">$251 to $300</a>
+                                                <a href="{% url 'product_list_price' 7 %}" class="dropdown-item">$301 to $350</a>
+                                                <a href="{% url 'product_list_price' 8 %}" class="dropdown-item">$351 to $400</a>
+                                                <a href="{% url 'product_list_price' 9 %}" class="dropdown-item">$401 to $450</a>
+                                                <a href="{% url 'product_list_price' 10 %}" class="dropdown-item">$451 to $3000</a>{% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% if ProductsPrand %}
+                    <div class="col-md-12">
+                        <h1 class="brand">{{ProductsPrand.name}}</h1>
+                    </div>
+                    {% elif tag %}
+                    <div class="col-md-12">
+                        <h1 class="brand">#{{tag.name}}</h1>
+                    </div>
+                    {% endif %}
+                    <br> {% for product in products %}
+                    <div class="col-md-4">
+                        <a href="{% url 'product_Details' product.pk %}">
+                            <div class="product-item">
+                                <div class="product-title">
+                                    <a href="{% url 'product_Details' product.pk %}">{{product.name}}  </a>
+                                    <div class="ratting">
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                    </div>
+                                </div>
+                                <div class="product-image">
+
+                                    <a href="{% url 'product_Details' product.pk %}">
+                                        <img src="{{product.image.url}}" height="300px" alt="Product Image {{ product.pk}} {{imgea.product}}">
+                                    </a>
+
+
+                                    <div class="product-action">
+
+                                        <button type="button" class="btn  update-cart" data-product="{{product.id}}" data-action="add">
+                                            <i class="fa fa-cart-plus"></i></button>
+                                        <a href="#"><i class="fa fa-heart"></i></a>
+
+                                    </div>
+
+                                </div>
+                                <div class="product-price">
+                                    <strong class="text-white"><span>$</span>{{product.price}}</strong>
+                                    <a class="btn" href="{% url 'product_Details' product.pk %}"><i class="fa fa-shopping-cart"></i>Buy Now</a>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    {% endfor %}
+
+                </div>
+
+                <!-- Pagination Start -->
+                <div class="col-md-12" style="margin-bottom: 30px;">
+
+                    <nav aria-label="Page navigation example">
+                        {% if current %}
+                        <p style="text-align: center;">Current Page: <b>{{current}}</b></p>
+                        {% endif %}
+
+                        <ul class="pagination justify-content-center">
+                            {% if has_pre %} {%if ProductsPrand %}
+                            <li class="page-item ">
+                                <a class="page-link" href="{% url 'product_prand_list' ProductsPrand.pk pre %}"> Previous</a>
+                            </li>{% elif category %}
+                            <li class="page-item ">
+                                <a class="page-link" href="{% url 'product_category' category.pk pre %}"> Previous</a>
+                            </li> {% elif order_cat %}
+                            <li class="page-item ">
+                                <a class="page-link" href="{% url 'orderd_product_list' order_cat pre %}"> Previous</a>
+                            </li>{% elif price_cat %}
+                            <li class="page-item ">
+                                <a class="page-link" href="{% url 'product_list_price' price_cat pre %}"> Previous</a>
+                            </li>{% elif tag %}
+                            <li class="page-item ">
+                                <a class="page-link" href="{% url 'product_tag_list' tag.pk pre %}"> Previous</a>
+                            </li> {% elif cat_prand %}
+                            <li class="page-item ">
+                                <a class="page-link" href="{% url 'product_category_prand_list' cat_prand.category_pk cat_prand.prand_pk pre %}"> Previous</a>
+                            </li>
+                            {% elif cat_price %}
+                            <li class="page-item ">
+                                <a class="page-link" href="{% url 'product_list_priceAndCategory' cat_price.category_pk cat_price.price_cat pre %}"> Previous</a>
+                            </li>{% else %}
+                            <li class="page-item ">
+                                <a class="page-link" href="{% url 'product_list_pagination' pre %}"> Previous</a>
+                            </li>{% endif %} {% endif%} {% if products.paginator.num_pages > 1 %}{% for page_number in products.paginator.page_range %} {%if ProductsPrand %}
+                            <li class="page-item ">
+                                <a class="page-link {% if page_number == products.number %} current {% endif %}" href="{% url 'product_prand_list' ProductsPrand.pk page_number %}"> 
+                                         {{page_number}}</a>
+                            </li>{% elif category %}
+                            <li class="page-item ">
+                                <a class="page-link {% if page_number == products.number %} current {% endif %}" href="{% url 'product_category' category.pk page_number %}"> 
+                                         {{page_number}}</a>
+                            </li>{% elif order_cat %}
+                            <li class="page-item ">
+                                <a class="page-link {% if page_number == products.number %} current {% endif %}" href="{% url 'orderd_product_list' order_cat page_number %}"> 
+                                    {{page_number}}</a>
+                            </li>{% elif price_cat %}
+                            <li class="page-item ">
+                                <a class="page-link {% if page_number == products.number %} current {% endif %}" href="{% url 'product_list_price' price_cat page_number %}"> 
+                                    {{page_number}}</a>
+                            </li>
+                            {% elif tag %}
+                            <li class="page-item ">
+                                <a class="page-link {% if page_number == products.number %} current {% endif %}" href="{% url 'product_tag_list' tag.pk page_number %}"> 
+                                    {{page_number}}</a>
+                            </li>{% elif cat_prand %}
+                            <li class="page-item ">
+                                <a class="page-link {% if page_number == products.number %} current {% endif %}" href="{% url 'product_category_prand_list' cat_prand.category_pk cat_prand.prand_pk page_number %}"> 
+                                    {{page_number}}</a>
+                            </li>{% elif cat_price %}
+                            <li class="page-item ">
+                                <a class="page-link {% if page_number == products.number %} current {% endif %}" href="{% url 'product_list_priceAndCategory' cat_price.category_pk cat_price.price_cat page_number %}"> 
+                                    {{page_number}}</a>
+                            </li>{% else %}
+                            <li class="page-item ">
+                                <a class="page-link {% if page_number == products.number %} current {% endif %}" href="{% url 'product_list_pagination' page_number %}"> 
+                                         {{page_number}}</a>
+                            </li>{% endif %} {% endfor %} {% endif %} {% if has_next %} {%if ProductsPrand %}
+                            <li class="page-item">
+                                <a class="page-link" href="{% url 'product_prand_list' ProductsPrand.pk next %}"> Next </a>
+                            </li>{% elif category %}
+                            <li class="page-item">
+                                <a class="page-link" href="{% url 'product_category' category.pk pre %}"> Next </a>
+                            </li>{% elif order_cat %}
+                            <li class="page-item ">
+                                <a class="page-link" href="{% url 'orderd_product_list' order_cat next %}"> Next</a>
+                            </li>{% elif price_cat %}
+                            <li class="page-item ">
+                                <a class="page-link" href="{% url 'product_list_price' price_cat next %}"> Next</a>
+                            </li>
+                            {% elif tag %}
+                            <li class="page-item ">
+                                <a class="page-link" href="{% url 'product_tag_list' tag.pk next %}"> Next</a>
+                            </li>{% elif cat_prand %}
+                            <li class="page-item ">
+                                <a class="page-link" href="{% url 'product_category_prand_list' cat_prand.category_pk cat_prand.prand_pk next %}"> Next</a>
+                            </li>{% elif cat_price %}
+                            <li class="page-item ">
+                                <a class="page-link" href="{% url 'product_list_priceAndCategory' cat_price.category_pk cat_price.price_cat next %}"> Next</a>
+                            </li>{% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="{% url 'product_list_pagination' next %}"> Next </a>
+                            </li>{% endif %} {% endif %}
+                        </ul>
+
+                    </nav>
+                </div>
+                <!-- Pagination Start -->
+            </div>
+
+            <!-- Side Bar Start -->
+            <div class="col-lg-4 sidebar">
+                <div class="sidebar-widget category">
+                    <h2 class="title">Category</h2>
+                    <nav class="navbar bg-light">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'product_list' %}"><i class="fa fa-microchip"></i>All Products</a>
+                            </li>
+                            {% for cat in categories %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'product_category' cat.pk %}"><i class="fa fa-microchip"></i>{{cat.name}}</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </nav>
+                </div>
+
+                <div class="sidebar-widget widget-slider">
+                    <div class="section-header">
+                        <h2 style="font-family: 'Source Code Pro', monospace;
+                        font-weight: 900; color: #ff6f61;
+                         border-top: 3px solid rgba(177, 116, 116, 0.212);">
+                            Recent Products</h2>
+                    </div>
+                    <div class="sidebar-slider normal-slider">
+
+                        {% for product_recent in recent_products%}
+                        <div class="product-item">
+                            <div class="product-title">
+                                <a href="#">{{product_recent.name}}</a>
+                                <div class="ratting">
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                </div>
+                            </div>
+                            <div class="product-image">
+                                <a href="{% url 'product_Details' product_recent.pk %}">
+                                    <img src="{{product_recent.image.url}}" height="300px" alt="Product Image">
+                                </a>
+                                <div class="product-action">
+                                    <button style="margin-right: 5px;" type="button" class="btn  update-cart" data-product="{{product.id}}" data-action="add">
+                                        <i class="fa fa-cart-plus"></i></button>
+                                    <a href="#"><i class="fa fa-heart"></i></a>
+                                </div>
+                            </div>
+                            <div class="product-price">
+                                <h3><span>$</span>{{product_recent.price}}</h3>
+                                <a class="btn" href=""><i class="fa fa-shopping-cart"></i>Buy Now</a>
+                            </div>
+                        </div> {% endfor %}
+
+
+                    </div>
+                </div>
+
+                <div class="sidebar-widget brands">
+                    {% if prands %} {% if category %}
+                    <h2 class="title">Our {{category.name}} Brands</h2>{% else %}
+                    <h2 class="title">Our Brands</h2>{% endif %}
+
+                    <ul>
+                        {% if category %}{% for prand in prands %}
+                        <li><a href="{% url 'product_category_prand_list' category.pk prand.pk %}">{{prand.name}} </a><span>&nbsp; ({{prand.count}})</span></li>{% endfor %} {% else %} {% for prand in prands %}
+                        <li><a href="{% url 'product_prand_list' prand.pk %}">{{prand.name}} </a><span>&nbsp; ({{prand.count}})</span></li>{% endfor %}{% endif %}
+
+
+                    </ul>
+                    {% endif %}
+                </div>
+
+                <div class="sidebar-widget tag">
+                    {% if tags %}
+                    <h2 class="title">Tags Cloud</h2>
+                    {%for tag in tags %}
+                    <a href="{% url 'product_tag_list' tag.pk %}">{{tag.name}}</a> {% endfor %} {% endif %}
+                </div>
+            </div>
+            <!-- Side Bar End -->
+        </div>
+    </div>
+</div>
+<!-- Product List End -->
+
+<!-- Brand Start -->
+{% include 'includes/brand.html'%}
+<!-- Brand End -->
+{% endblock %}

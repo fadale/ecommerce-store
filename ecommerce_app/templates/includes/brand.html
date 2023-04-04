@@ -1,0 +1,13 @@
+{% load static %}
+<div class="brand">
+    <div class="brand">
+        <div style="margin-bottom: 25px;" class="container-fluid">
+            <div class="brand-slider">
+                {% for prand in prands %}
+                <div class="brand-item">
+                    <a href="{% url 'product_prand_list' prand.pk %}"> <img src="{{prand.icon.url}}" height="80px" alt=""> </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+</div>
